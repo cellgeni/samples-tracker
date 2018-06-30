@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.views import View
 from django.views.generic import TemplateView, ListView
 from rest_framework import generics
 
@@ -20,7 +22,6 @@ class SamplesListView(generics.ListAPIView):
 
 
 class StagesListView(generics.ListAPIView):
-# class StagesListView(generics.ListAPIView):
     serializer_class = StageSerializer
 
     def get(self, request, *args, **kwargs):
@@ -31,16 +32,19 @@ class StagesListView(generics.ListAPIView):
         return Stage.objects.filter(sample__id=self.sid)
 
 
-class SamplesSearch(ListView):
-    template_name = 'content.html'
+class SamplesAutocomplete(View):
 
     def get(self, request, *args, **kwargs):
-        # if request.is_ajax():
-        self.q = request.GET.get('q', '')
-        return super(SamplesSearch, self).get(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return Sample.objects.filter(sid__contains=self.q)
+        q = request.GET.get('term', '')
+        samples = Sample.objects.filter(sid__contains=q)
+        results = []
+        for sample in samples:
+            sample_json = {}
+            sample_json['id'] = sample.id
+            sample_json['label'] = sample.sid
+            sample_json['value'] = sample.sid
+            results.append(sample_json)
+        return JsonResponse(results, safe=False)
 
 
 class StagesSearch(ListView):
@@ -51,5 +55,4 @@ class StagesSearch(ListView):
         return super(StagesSearch, self).get(self, request, *args, **kwargs)
 
     def get_queryset(self):
-        return Stage.objects.filter(sample__id=self.sid)
-
+        return Stage.objects.filter(sample__sid=self.sid)

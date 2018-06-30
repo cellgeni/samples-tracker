@@ -5,18 +5,11 @@
 
 {% block content %}
     {% block search %}
-        <div class="select-sample">
+        <div class="select-sample ui-widget">
         <h5>Select sample: </h5>
     <label for="samples-search"></label>
-{#    <input type="text" id="samples-search" name="samples-search"#}
-{#           placeholder="Search samples">#}
-
-        <select name="samples-select" id="samples-select">
-        {% for sample in samples %}
-            <option value={{ sample.id }}>{{ sample.sid }}</option>
-        {% endfor %}
-        </select>
-        </div>
+    <input type="text" id="samples-search" name="samples-search"
+           placeholder="Search samples">
     {% endblock search %}
     {% include "content.html" %}
 

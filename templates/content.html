@@ -1,35 +1,23 @@
-{#<ul class="border object-list">#}
-{##}
-{#    {% for stage in object_list %}#}
-{#        <li>{{ stage.name }}</li>#}
-{#        <select>#}
-{#            {% for action in stage.actions.all %}#}
-{#                <option value="volvo">{{ action.name }}</option>#}
-{#            {% endfor %}#}
-{##}
-{#        </select>#}
-{#        {% if sample.date %}#}
-{#            <li>{{ sample.date }}</li>#}
-{#        {% endif %}#}
-{#    {% endfor %}#}
-{##}
-{#</ul>#}
-<div class="object-list hidden">
+<div class="object-list">
 {% if object_list %}
 <table class="table">
     <thead>
     <tr>
         <th scope="col">#</th>
-        <th scope="col">Stage</th>
-        <th scope="col">Status</th>
         <th scope="col">Date</th>
+        <th scope="col">Action</th>
     </tr>
     </thead>
     <tbody>
     {% for stage in object_list %}
         <tr>
             <th class="num-increment" scope="row"></th>
-            <td>{{ stage.name }}</td>
+            <td>
+
+                {% if sample.date %}
+                    {{ sample.date }}
+                {% endif %}
+            </td>
             <td>
             <select>
             {% for action in stage.actions.all %}
@@ -39,12 +27,7 @@
             </select>
 
             </td>
-            <td>
 
-                {% if sample.date %}
-                    {{ sample.date }}
-                {% endif %}
-            </td>
         </tr>
 
 
