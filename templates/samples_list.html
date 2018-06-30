@@ -1,0 +1,40 @@
+<div class="object-list">
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Sample</th>
+        <th scope="col">Last updated</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if object_list %}
+
+    {% for sample in object_list %}
+        <tr>
+            <th class="num-increment" scope="row"></th>
+            <td>
+                <a href="/samples/{{ sample.sid }}">{{ sample.sid }}</a>
+            </td>
+
+            <td>
+
+                {% if sample.date %}
+                    {{ sample.date }}
+                {% endif %}
+            </td>
+        </tr>
+
+
+
+    {% endfor %}
+            {% else %}
+        <tr>            <th scope="row"></th>
+<td>Nothing found</td></tr>
+{% endif %}
+
+    </tbody>
+</table>
+
+
+</div>

@@ -1,22 +1,20 @@
 from django.http import JsonResponse
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import ListView
 from rest_framework import generics
 
 from .models import Sample, Stage
 from .serializers import SampleSerializer, StageSerializer
 
 
-class SamplesView(TemplateView):
+class SamplesListView(ListView):
     template_name = "samples.html"
 
-    def get_context_data(self, **kwargs):
-        context = dict()
-        context["samples"] = Sample.objects.all()
-        return context
+    def get_queryset(self):
+        return Sample.objects.all()
 
 
-class SamplesListView(generics.ListAPIView):
+class SamplesAPIListView(generics.ListAPIView):
     serializer_class = SampleSerializer
     queryset = Sample.objects.all()
 
@@ -30,6 +28,17 @@ class StagesListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Stage.objects.filter(sample__id=self.sid)
+
+
+class SampleView(ListView):
+    template_name = "single_sample.html"
+
+    def get(self, request, *args, **kwargs):
+        self.sid = kwargs.get('sid')
+        return super(SampleView, self).get(self, request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Stage.objects.filter(sample__sid=self.sid)
 
 
 class SamplesAutocomplete(View):
@@ -48,7 +57,7 @@ class SamplesAutocomplete(View):
 
 
 class StagesSearch(ListView):
-    template_name = 'content.html'
+    template_name = 'single_sample_stages.html'
 
     def get(self, request, *args, **kwargs):
         self.sid = kwargs.get('sid')
@@ -56,3 +65,14 @@ class StagesSearch(ListView):
 
     def get_queryset(self):
         return Stage.objects.filter(sample__sid=self.sid)
+
+
+class SamplesSearch(ListView):
+    template_name = 'samples_list.html'
+
+    def get(self, request, *args, **kwargs):
+        self.sid = request.GET.get('q')
+        return super(SamplesSearch, self).get(self, request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Sample.objects.filter(sid__contains=self.sid)

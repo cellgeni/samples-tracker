@@ -7,12 +7,11 @@
     {% block search %}
         <div class="select-sample ui-widget">
         <h5>Select sample: </h5>
-    <label for="samples-search"></label>
-    <input type="text" id="samples-search" name="samples-search"
+    <label for="stages-search"></label>
+    <input type="text" id="stages-search" name="stages-search"
            placeholder="Search samples">
-        </div>
+                </div>
     {% endblock search %}
-    {% include "samples_list.html" %}
-
+    {% include "single_sample_stages.html" %}
 
 {% endblock content %}
