@@ -1,10 +1,16 @@
 from django.http import JsonResponse
+from django.shortcuts import render
+# from django.utils import timezone
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, RedirectView
 from rest_framework import generics
 
-from .models import Sample, Stage
+from .models import Sample, Stage, Action
 from .serializers import SampleSerializer, StageSerializer
+
+
+class HomePageView(RedirectView):
+    url = "samples/"
 
 
 class SamplesListView(ListView):
@@ -30,15 +36,24 @@ class StagesListView(generics.ListAPIView):
         return Stage.objects.filter(sample__id=self.sid)
 
 
-class SampleView(ListView):
+# class StageCreateView(generics.CreateAPIView):
+#
+#     def create(self, request, *args, **kwargs):
+#         request['active'] = True
+#         request['date'] = timezone.now()
+#         return super(StageCreateView, self).create(request, *args, **kwargs)
+
+
+class SampleView(View):
     template_name = "single_sample.html"
 
     def get(self, request, *args, **kwargs):
-        self.sid = kwargs.get('sid')
-        return super(SampleView, self).get(self, request, *args, **kwargs)
-
-    def get_queryset(self):
-        return Stage.objects.filter(sample__sid=self.sid)
+        context = {}
+        sid = kwargs.get('sid')
+        context['sid'] = sid
+        context['actions'] = Action.objects.all()
+        context['stages'] = Sample.objects.get(sid=sid).stages
+        return render(request, self.template_name, context)
 
 
 class SamplesAutocomplete(View):
@@ -60,11 +75,12 @@ class StagesSearch(ListView):
     template_name = 'single_sample_stages.html'
 
     def get(self, request, *args, **kwargs):
-        self.sid = kwargs.get('sid')
-        return super(StagesSearch, self).get(self, request, *args, **kwargs)
-
-    def get_queryset(self):
-        return Stage.objects.filter(sample__sid=self.sid)
+        context = {}
+        sid = kwargs.get('sid')
+        context['sid'] = sid
+        context['actions'] = Action.objects.all()
+        context['stages'] = Sample.objects.get(sid=sid).stages
+        return render(request, self.template_name, context)
 
 
 class SamplesSearch(ListView):

@@ -9,13 +9,12 @@ class Action(models.Model):
 
 
 class Stage(models.Model):
-    actions = models.ManyToManyField(Action)
-    name = models.CharField(max_length=200)
+    action = models.ForeignKey(Action, null=True, blank=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True, blank=True)
 
     def __str__(self):
-        return str(self.name)
+        return str(self.action) + " " + str(self.date)
 
 
 class Sample(models.Model):

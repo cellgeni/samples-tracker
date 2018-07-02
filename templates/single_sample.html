@@ -1,16 +1,20 @@
 {% extends "base.html" %}
-    {% block title %}
-        Samples database
-        {% endblock title %}
+{% block title %}
+    Samples database
+{% endblock title %}
 
 {% block content %}
     {% block search %}
+        {#        <div class="container">#}
+        {#        <div class="select-sample ui-widget row">#}
         <div class="select-sample ui-widget">
-        <h5>Select sample: </h5>
-    <label for="stages-search"></label>
-    <input type="text" id="stages-search" name="stages-search"
-           placeholder="Search samples">
-                </div>
+            <h5>Select sample: </h5>
+            <label for="stages-search"></label>
+            <input type="text" id="stages-search" name="stages-search"
+                   placeholder="Search samples">
+        </div>
+        <div class=""><a href="/samples/">All samples</a></div>
+        {#</div>#}
     {% endblock search %}
     {% include "single_sample_stages.html" %}
 

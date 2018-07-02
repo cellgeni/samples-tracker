@@ -1,9 +1,11 @@
 from django.urls import path
 
-from .views import SamplesAPIListView, SamplesListView, SamplesAutocomplete, StagesSearch, SampleView, SamplesSearch
+from .views import SamplesAPIListView, SamplesListView, SamplesAutocomplete, StagesSearch, SampleView, SamplesSearch, \
+    HomePageView
 
 urlpatterns = [
-    path('', SamplesListView.as_view()),
+    path('', HomePageView.as_view()),
+    path('samples/', SamplesListView.as_view()),
     path('samples/<str:sid>', SampleView.as_view()),
     path('api/samples', SamplesAPIListView.as_view()),
     path('api/samples-search/', SamplesSearch.as_view()),

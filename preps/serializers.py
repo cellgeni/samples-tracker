@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Stage, Action, Sample
 
 
-class ActionSerialiser(serializers.ModelSerializer):
+class ActionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Action
@@ -10,11 +10,11 @@ class ActionSerialiser(serializers.ModelSerializer):
 
 
 class StageSerializer(serializers.ModelSerializer):
-    actions = ActionSerialiser(many=True)
+    action = ActionSerializer()
 
     class Meta:
         model = Stage
-        fields = ['name', 'actions', 'date', 'active']
+        fields = ['action', 'date', 'active']
 
 
 class SampleSerializer(serializers.HyperlinkedModelSerializer):
