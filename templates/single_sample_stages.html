@@ -1,4 +1,4 @@
-<div class="object-list">
+<div class="object-list container">
     {% if stages %}
         <table class="table" id="stages-table">
             <thead>
@@ -9,7 +9,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for stage in stages.all %}
+            {% for stage in stages %}
                 <tr>
                     <th class="num-increment" scope="row"></th>
                     <td>
@@ -20,19 +20,38 @@
                     </td>
                     <td>
                         {{ stage.action.name }}
-{#                        <select class="select-action">#}
-{#                            {% for action in actions %}#}
-{#                                <option value="{{ action.id }}">{{ action.name }}</option>#}
-{#                            {% endfor %}#}
-{##}
-{#                        </select>#}
-
                     </td>
 
                 </tr>
 
 
             {% endfor %}
+
+<form action="/api/stage/" method="post" id="stage-form">
+    {% csrf_token %}
+                  <tr>
+                    <th scope="row">
+                        <button class="btn btn-success" id="save-stage" type="submit">
+                 <span class="glyphicon glyphicon-plus"></span> Save
+                    </button></th>
+                    <td>
+
+                    </td>
+                    <td>
+
+                        <select class="select-action dropdown" form="stage-form" name="action" id="action">
+                            {% for action in actions %}
+                                <option value="{{ action.id }}">{{ action.name }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                    </td>
+
+                </tr>
+            <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
+
+</form>
 
             </tbody>
         </table>

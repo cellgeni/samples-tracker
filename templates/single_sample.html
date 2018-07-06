@@ -5,8 +5,8 @@
 
 {% block content %}
     {% block search %}
-        {#        <div class="container">#}
-        {#        <div class="select-sample ui-widget row">#}
+
+                <div class="container">
         <div class="select-sample ui-widget">
             <h5>Select sample: </h5>
             <label for="stages-search"></label>
@@ -14,7 +14,7 @@
                    placeholder="Search samples">
         </div>
         <div class=""><a href="/samples/">All samples</a></div>
-        {#</div>#}
+        </div>
     {% endblock search %}
     {% include "single_sample_stages.html" %}
 

@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import SamplesAPIListView, SamplesListView, SamplesAutocomplete, StagesSearch, SampleView, SamplesSearch, \
-    HomePageView
+    HomePageView, StageCreateView
 
 urlpatterns = [
     path('', HomePageView.as_view()),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/samples-search/', SamplesSearch.as_view()),
     path('api/samples/<str:sid>/stages', StagesSearch.as_view()),
     path('api/samples-autocomplete/', SamplesAutocomplete.as_view()),
+    path('api/stage/', StageCreateView.as_view()),
 ]

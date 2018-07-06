@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
+
 from .models import Stage, Action, Sample
 
 
@@ -15,6 +17,15 @@ class StageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stage
         fields = ['action', 'date', 'active']
+
+
+class StageCreateSerializer(serializers.ModelSerializer):
+    action = PrimaryKeyRelatedField(queryset=Action.objects.all())
+    sample = PrimaryKeyRelatedField(queryset=Sample.objects.all())
+
+    class Meta:
+        model = Stage
+        fields = ['action', 'sample']
 
 
 class SampleSerializer(serializers.HyperlinkedModelSerializer):

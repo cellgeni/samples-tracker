@@ -1,12 +1,12 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from django.shortcuts import render
-# from django.utils import timezone
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, RedirectView
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 from .models import Sample, Stage, Action
-from .serializers import SampleSerializer, StageSerializer
+from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
 
 
 class HomePageView(RedirectView):
@@ -36,12 +36,18 @@ class StagesListView(generics.ListAPIView):
         return Stage.objects.filter(sample__id=self.sid)
 
 
-# class StageCreateView(generics.CreateAPIView):
-#
-#     def create(self, request, *args, **kwargs):
-#         request['active'] = True
-#         request['date'] = timezone.now()
-#         return super(StageCreateView, self).create(request, *args, **kwargs)
+class StageCreateView(generics.CreateAPIView):
+    serializer_class = StageCreateSerializer
+
+    # def update(self, request, *args, **kwargs):
+    #     new_stage = Stage(action=Action.objects.get(id=request.data.get('action')))
+    #     sample = Sample.objects.get(id=request.data.get('sid'))
+    #     sample.stages.append(new_stage)
+    #     sample.save()
+    #     return super(StageCreateView, self).update(request, *args, **kwargs)
+
+    # def post(self, request, *args, **kwargs):
+    #     return self.put(request, *args, **kwargs)
 
 
 class SampleView(View):
@@ -49,10 +55,10 @@ class SampleView(View):
 
     def get(self, request, *args, **kwargs):
         context = {}
-        sid = kwargs.get('sid')
-        context['sid'] = sid
+        sample = Sample.objects.get(sid=kwargs.get('sid'))
+        context['sid'] = sample.id
         context['actions'] = Action.objects.all()
-        context['stages'] = Sample.objects.get(sid=sid).stages
+        context['stages'] = Stage.objects.filter(sample=sample)
         return render(request, self.template_name, context)
 
 
@@ -77,9 +83,14 @@ class StagesSearch(ListView):
     def get(self, request, *args, **kwargs):
         context = {}
         sid = kwargs.get('sid')
+        try:
+            id = int(sid)
+            sample = Sample.objects.get(id=id)
+        except ValueError:
+            sample = Sample.objects.get(sid=sid)
         context['sid'] = sid
         context['actions'] = Action.objects.all()
-        context['stages'] = Sample.objects.get(sid=sid).stages
+        context['stages'] = Stage.objects.filter(sample=sample)
         return render(request, self.template_name, context)
 
 
