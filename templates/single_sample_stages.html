@@ -55,7 +55,62 @@
 
             </tbody>
         </table>
+        {% else %}
+ <table class="table" id="stages-table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for stage in stages %}
+                <tr>
+                    <th class="num-increment" scope="row"></th>
+                    <td>
 
+                        {% if stage.date %}
+                            {{ stage.date }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ stage.action.name }}
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+<form action="/api/stage/" method="post" id="stage-form">
+    {% csrf_token %}
+                  <tr>
+                    <th scope="row">
+                        <button class="btn btn-success" id="save-stage" type="submit">
+                 <span class="glyphicon glyphicon-plus"></span> Save
+                    </button></th>
+                    <td>
+
+                    </td>
+                    <td>
+
+                        <select class="select-action dropdown" form="stage-form" name="action" id="action">
+                            {% for action in actions %}
+                                <option value="{{ action.id }}">{{ action.name }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                    </td>
+
+                </tr>
+            <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
+
+</form>
+
+            </tbody>
+        </table>
     {% endif %}
 
 </div>

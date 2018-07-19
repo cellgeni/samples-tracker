@@ -2,10 +2,10 @@ from django.http import JsonResponse, QueryDict
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
-from django.views.generic import ListView, RedirectView
+from django.views.generic import ListView, RedirectView, TemplateView
 from rest_framework import generics, permissions
 
-from .models import Sample, Stage, Action
+from .models import Sample, Stage, Action, WarehouseSample
 from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
 
 
@@ -17,8 +17,11 @@ class SamplesListView(ListView):
     template_name = "samples.html"
 
     def get_queryset(self):
-        return Sample.objects.all()
+        # return Sample.objects.all()
+        return WarehouseSample.objects.using("warehouse").raw(WarehouseSample.warehouse_view)
 
+class ProjectsListView(TemplateView):
+    template_name = "projects_list.html"
 
 class SamplesAPIListView(generics.ListAPIView):
     serializer_class = SampleSerializer

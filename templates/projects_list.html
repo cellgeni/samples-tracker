@@ -1,19 +1,25 @@
+{% extends "base.html" %}
+    {% block title %}
+        Projects
+        {% endblock title %}
+
+{% block content %}
+
+
 <div class="object-list container">
 <table class="samples-table table ">
     <thead>
     <tr>
         <th scope="col">#</th>
-        <th scope="col">Cost code</th>
-        <th scope="col">Sample name</th>
-        <th scope="col">Supplier name</th>
-        <th scope="col">Donor id</th>
-        <th scope="col">Cohort</th>
-        <th scope="col">Gender</th>
-        <th scope="col">Public name</th>
-        <th scope="col">Common Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Phenotype</th>
-        <th scope="col">Last updated</th>
+        <th scope="col">Year to date</th>
+        <th scope="col">This month</th>
+        <th scope="col">Funding</th>
+        <th scope="col">Funding type</th>
+        <th scope="col">Project text</th>
+        <th scope="col">Project</th>
+        <th scope="col">Balance of grants available</th>
+        <th scope="col">LTD budget</th>
+        <th scope="col">LTD actual</th>
     </tr>
     </thead>
     <tbody>
@@ -22,7 +28,7 @@
     {% for sample in object_list %}
         <tr>
             <th class="num-increment" scope="row"></th>
-        <td><a href="/projects/">{{ sample.cost_code }}</a></td>
+        <td>{{ sample.cost_code }}</td>
             <td>
                 <a href="/samples/{{ sample.name }}">{{ sample.name }}</a>
             </td>
@@ -55,3 +61,4 @@
 
 
 </div>
+{% endblock content %}
