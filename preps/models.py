@@ -2,6 +2,14 @@ from django.db import models
 from django.utils import timezone
 
 
+class Owner(models.Model):
+    first_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.last_name + " " + self.first_name
+
+
 class Action(models.Model):
     name = models.CharField(max_length=200)
 
@@ -21,6 +29,7 @@ class Stage(models.Model):
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     date = models.DateTimeField(null=True, blank=True, default=timezone.now)
     active = models.BooleanField(default=False, blank=True)
+    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return str(self.action) + " " + str(self.date) + " " + str(self.sample)

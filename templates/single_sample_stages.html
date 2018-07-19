@@ -6,6 +6,8 @@
                 <th scope="col">#</th>
                 <th scope="col">Date</th>
                 <th scope="col">Action</th>
+                <th scope="col">Owner</th>
+
             </tr>
             </thead>
             <tbody>
@@ -21,19 +23,23 @@
                     <td>
                         {{ stage.action.name }}
                     </td>
+                    <td>
+                        {{ stage.owner.last_name }} {{ stage.owner.first_name }}
+                    </td>
 
                 </tr>
 
 
             {% endfor %}
 
-<form action="/api/stage/" method="post" id="stage-form">
-    {% csrf_token %}
-                  <tr>
+            <form action="/api/stage/" method="post" id="stage-form">
+                {% csrf_token %}
+                <tr>
                     <th scope="row">
                         <button class="btn btn-success" id="save-stage" type="submit">
-                 <span class="glyphicon glyphicon-plus"></span> Save
-                    </button></th>
+                            <span class="glyphicon glyphicon-plus"></span> Save
+                        </button>
+                    </th>
                     <td>
 
                     </td>
@@ -47,21 +53,31 @@
                         </select>
 
                     </td>
+                    <td>
+                        <label for="owner"></label>
+                        <select class="select-owner dropdown" form="stage-form" name="owner" id="owner">
+                            {% for owner in owners %}
+                                <option value="{{ owner.id }}">{{ owner.last_name }} {{ owner.first_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </td>
 
                 </tr>
-            <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
+                <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
 
-</form>
+            </form>
 
             </tbody>
         </table>
-        {% else %}
- <table class="table" id="stages-table">
+    {% else %}
+        <table class="table" id="stages-table">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Date</th>
                 <th scope="col">Action</th>
+                <th scope="col">Owner</th>
             </tr>
             </thead>
             <tbody>
@@ -83,13 +99,14 @@
 
             {% endfor %}
 
-<form action="/api/stage/" method="post" id="stage-form">
-    {% csrf_token %}
-                  <tr>
+            <form action="/api/stage/" method="post" id="stage-form">
+                {% csrf_token %}
+                <tr>
                     <th scope="row">
                         <button class="btn btn-success" id="save-stage" type="submit">
-                 <span class="glyphicon glyphicon-plus"></span> Save
-                    </button></th>
+                            <span class="glyphicon glyphicon-plus"></span> Save
+                        </button>
+                    </th>
                     <td>
 
                     </td>
@@ -103,11 +120,20 @@
                         </select>
 
                     </td>
+                    <td>
+                        <label for="owner"></label>
+                        <select class="select-owner dropdown" form="stage-form" name="owner" id="owner">
+                            {% for owner in owners %}
+                                <option value="{{ owner.id }}">{{ owner.last_name }} {{ owner.first_name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </td>
 
                 </tr>
-            <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
+                <input type="hidden" id="sample_id" name="sample" form="stage-form" value={{ sid }}>
 
-</form>
+            </form>
 
             </tbody>
         </table>

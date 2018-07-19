@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import ListView, RedirectView, TemplateView
 from rest_framework import generics
 
-from .models import Sample, Stage, Action, WarehouseSample
+from .models import Sample, Stage, Action, WarehouseSample, Owner
 from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
 
 
@@ -58,6 +58,7 @@ class SampleView(View):
         context['sid'] = sample.id
         context['actions'] = Action.objects.all()
         context['stages'] = Stage.objects.filter(sample=sample)
+        context['owners'] = Owner.objects.all()
         return render(request, self.template_name, context)
 
 
@@ -90,6 +91,7 @@ class StagesSearch(ListView):
         context['sid'] = sid
         context['actions'] = Action.objects.all()
         context['stages'] = Stage.objects.filter(sample=sample)
+        context['owners'] = Owner.objects.all()
         return render(request, self.template_name, context)
 
 
