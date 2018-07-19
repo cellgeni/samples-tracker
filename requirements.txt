@@ -1,5 +1,5 @@
 django>=2.0
 djangorestframework>=3.8.2
-mysqlclient
+pymysql
 psycopg2==2.7.5
 cx_oracle==6.4.1
