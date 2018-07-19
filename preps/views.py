@@ -1,9 +1,9 @@
-from django.http import JsonResponse, QueryDict
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, RedirectView, TemplateView
-from rest_framework import generics, permissions
+from rest_framework import generics
 
 from .models import Sample, Stage, Action, WarehouseSample
 from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
@@ -17,11 +17,12 @@ class SamplesListView(ListView):
     template_name = "samples.html"
 
     def get_queryset(self):
-        # return Sample.objects.all()
         return WarehouseSample.objects.using("warehouse").raw(WarehouseSample.warehouse_view)
+
 
 class ProjectsListView(TemplateView):
     template_name = "projects_list.html"
+
 
 class SamplesAPIListView(generics.ListAPIView):
     serializer_class = SampleSerializer
@@ -42,23 +43,18 @@ class StagesListView(generics.ListAPIView):
 class StageCreateView(generics.CreateAPIView):
     serializer_class = StageCreateSerializer
 
-    # def update(self, request, *args, **kwargs):
-    #     new_stage = Stage(action=Action.objects.get(id=request.data.get('action')))
-    #     sample = Sample.objects.get(id=request.data.get('sid'))
-    #     sample.stages.append(new_stage)
-    #     sample.save()
-    #     return super(StageCreateView, self).update(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     return self.put(request, *args, **kwargs)
-
 
 class SampleView(View):
     template_name = "single_sample.html"
 
     def get(self, request, *args, **kwargs):
         context = {}
-        sample = Sample.objects.get(sid=kwargs.get('sid'))
+        sid = kwargs.get("sid")
+        try:
+            sample = Sample.objects.get(sid=sid)
+        except ObjectDoesNotExist:
+            sample = Sample(sid=sid)
+            sample.save()
         context['sid'] = sample.id
         context['actions'] = Action.objects.all()
         context['stages'] = Stage.objects.filter(sample=sample)
