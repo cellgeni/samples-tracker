@@ -1,64 +1,103 @@
 {% extends "base.html" %}
-    {% block title %}
-        Projects
-        {% endblock title %}
+{% block title %}
+    Projects
+{% endblock title %}
 
 {% block content %}
 
+    <div class="object-list container">
 
-<div class="object-list container">
-<table class="samples-table table ">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Year to date</th>
-        <th scope="col">This month</th>
-        <th scope="col">Funding</th>
-        <th scope="col">Funding type</th>
-        <th scope="col">Project text</th>
-        <th scope="col">Project</th>
-        <th scope="col">Balance of grants available</th>
-        <th scope="col">LTD budget</th>
-        <th scope="col">LTD actual</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% if object_list %}
 
-    {% for sample in object_list %}
-        <tr>
-            <th class="num-increment" scope="row"></th>
-        <td>{{ sample.cost_code }}</td>
-            <td>
-                <a href="/samples/{{ sample.name }}">{{ sample.name }}</a>
-            </td>
-<td>{{ sample.supplier_name }}</td>
-<td>{{ sample.donor_id }}</td>
-<td>{{ sample.cohort }}</td>
-<td>{{ sample.gender }}</td>
-<td>{{ sample.public_name }}</td>
-<td>{{ sample.common_name }}</td>
-<td>{{ sample.description }}</td>
-<td>{{ sample.phenotype }}</td>
-            <td>
+        {% if is_project_core %}
 
-                {% if sample.date %}
-                    {{ sample.date }}
+            <h5>Core project</h5>
+
+            <table class="projects-table table ">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Project</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Year to date</th>
+                    <th scope="col">Year to date budget</th>
+                    <th scope="col">Annual budget</th>
+                    <th scope="col">Balance of grants available</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list %}
+
+                    {% for project in object_list %}
+                        <tr>
+                            <th class="num-increment" scope="row"></th>
+                            <td>{{ project.cost_code }}</td>
+                            <td>{{ project.accrep_text }}</td>
+                            <td>{{ project.year_to_date }}</td>
+                            <td>{{ project.year_to_date_budget }}</td>
+                            <td>{{ project.annual_budget }}</td>
+                            <td>{{ project.balance_avail }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <th scope="row"></th>
+                        <td>Nothing found</td>
+                    </tr>
                 {% endif %}
-            </td>
-        </tr>
+
+                </tbody>
+            </table>
 
 
 
-    {% endfor %}
-            {% else %}
-        <tr>            <th scope="row"></th>
-<td>Nothing found</td></tr>
-{% endif %}
-
-    </tbody>
-</table>
 
 
-</div>
+        {% else %}
+
+            <h5>Non-core project</h5>
+
+            <table class="projects-table table ">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Cost code</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Funding</th>
+                    <th scope="col">Funding type</th>
+                    <th scope="col">Year to date</th>
+                    <th scope="col">LTD actual</th>
+                    <th scope="col">LTD budget</th>
+                    <th scope="col">Balance of grants available</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object_list %}
+
+                    {% for project in object_list %}
+                        <tr>
+                            <th class="num-increment" scope="row"></th>
+                            <td>{{ project.cost_code }}</td>
+                            <td>{{ project.title }}</td>
+                            <td>{{ project.funding }}</td>
+                            <td>{{ project.fund_type }}</td>
+                            <td>{{ project.year_to_date }}</td>
+                            <td>{{ project.ltd_actual }}</td>
+                            <td>{{ project.ltd_budget }}</td>
+                            <td>{{ project.balance_avail }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <th scope="row"></th>
+                        <td>Nothing found</td>
+                    </tr>
+                {% endif %}
+
+                </tbody>
+            </table>
+
+        {% endif %}
+    Total balance: {{ total }}
+
+    </div>
 {% endblock content %}
