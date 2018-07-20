@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+NON_CORE_PROJECTS = "AGR55.CELLGEN_NON_CORE_PROJECTS"
+CORE_PROJECTS = "AGR55.CELLGEN_CORE_PROJECTS"
 
 class Owner(models.Model):
     first_name = models.CharField(max_length=40)
@@ -70,28 +72,56 @@ WHERE  iseq_flowcell.cost_code = "S4436"
 
     class Meta:
         managed = False
-        # db_table = 'warehouse'
 
     def __str__(self):
         return self.name
 
 
 class Project(models.Model):
-    year_to_date = models.CharField(max_length=15)
-    this_month = models.CharField(max_length=15)
-    accrep_text = models.CharField(max_length=255)
-    fund_type = models.CharField(max_length=25)
+    cost_code = models.CharField(max_length=25, primary_key=True)
+    title = models.CharField(max_length=25)
     funding = models.CharField(max_length=25)
+    fund_type = models.CharField(max_length=25)
+    accrep_text = models.CharField(max_length=255)
+    year_to_date = models.CharField(max_length=15)
     project_text = models.CharField(max_length=25)
-    project = models.CharField(max_length=25)
-    balance_of_grant_avail = models.CharField(max_length=15)
     ltd_budget = models.CharField(max_length=15)
     ltd_actual = models.CharField(max_length=15)
+    balance_avail = models.CharField(max_length=15)
 
-    class Meta:
-        managed = False
-        # db_table = 'AGR55.CELLGEN_NON_CORE_PROJECTS'
-        db_table = 'AGR55.CELLGEN_CORE_PROJECTS'
+    core_view = lambda cost_code: f"""
+        SELECT project as cost_code, 
+        accrep_text, 
+        "Year to Date" as year_to_date, 
+        "Year to Date Budget" year_to_date_budget, 
+        "Annual Budget" as annual_budget, 
+        "Balance of Grant Available" as balance_avail 
+        FROM {CORE_PROJECTS}
+        WHERE project = '{cost_code}'   
+         """
+    non_core_view = lambda cost_code: f"""
+           SELECT project as cost_code, 
+        project_text as title,
+        funding,
+        fund_type,
+        accrep_text,
+        "Year to Date" as year_to_date, 
+        "LTD Actual" as ltd_actual,
+        "LTD Budget" as ltd_budget,
+        "Balance of Grant Available" as balance_avail 
+        FROM {NON_CORE_PROJECTS}
+        WHERE project = '{cost_code}'
+    """
+    count_balance = lambda table, cost_code: f"""
+    SELECT SUM("Balance of Grant Available")
+    FROM {table}
+    WHERE project='{cost_code}'
+    """
 
-    def __str__(self):
-        return self.project
+
+class Meta:
+    managed = False
+
+
+def __str__(self):
+    return self.cost_code

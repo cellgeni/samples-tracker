@@ -5,7 +5,8 @@ from django.views import View
 from django.views.generic import ListView, RedirectView, TemplateView
 from rest_framework import generics
 
-from .models import Sample, Stage, Action, WarehouseSample, Owner
+from preps.models import CORE_PROJECTS, NON_CORE_PROJECTS
+from .models import Sample, Stage, Action, WarehouseSample, Owner, Project
 from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
 
 
@@ -20,8 +21,26 @@ class SamplesListView(ListView):
         return WarehouseSample.objects.using("warehouse").raw(WarehouseSample.warehouse_view)
 
 
-class ProjectsListView(TemplateView):
+class ProjectView(View):
     template_name = "projects_list.html"
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        cost_code = kwargs.get("cost_code")
+        is_project_core = True
+        object_list = Project.objects.using("agresso").raw(Project.core_view(cost_code))
+        if len(list(object_list)) == 0:
+            is_project_core = False
+            object_list = Project.objects.using("agresso").raw(Project.non_core_view(cost_code))
+
+        context['cost_code'] = cost_code
+        context['object_list'] = object_list
+        context['is_project_core'] = is_project_core
+        if is_project_core:
+            context['total'] = Project.objects.raw(Project.count_balance(CORE_PROJECTS, cost_code))
+        else:
+            context['total'] = Project.objects.raw(Project.count_balance(NON_CORE_PROJECTS, cost_code))
+        return render(request, self.template_name, context)
 
 
 class SamplesAPIListView(generics.ListAPIView):

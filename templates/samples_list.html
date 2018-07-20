@@ -22,7 +22,7 @@
     {% for sample in object_list %}
         <tr>
             <th class="num-increment" scope="row"></th>
-        <td><a href="/projects/">{{ sample.cost_code }}</a></td>
+        <td><a href="/projects/{{ sample.cost_code }}">{{ sample.cost_code }}</a></td>
             <td>
                 <a href="/samples/{{ sample.name }}">{{ sample.name }}</a>
             </td>
