@@ -1,9 +1,10 @@
 <div class="object-list container">
-<table class="samples-table table ">
+<table class="table samples-table table-hover table-bordered">
     <thead>
     <tr>
         <th scope="col">#</th>
         <th scope="col">Cost code</th>
+        <th scope="col">Core project</th>
         <th scope="col">Sample name</th>
         <th scope="col">Supplier name</th>
         <th scope="col">Donor id</th>
@@ -20,9 +21,14 @@
     {% if object_list %}
 
     {% for sample in object_list %}
+        {% if sample.balance < 0 %}
+        <tr class="table-danger">
+        {% else %}
         <tr>
+        {% endif %}
             <th class="num-increment" scope="row"></th>
         <td><a href="/projects/{{ sample.cost_code }}">{{ sample.cost_code }}</a></td>
+        <td>{{ sample.core }}</td>
             <td>
                 <a href="/samples/{{ sample.name }}">{{ sample.name }}</a>
             </td>

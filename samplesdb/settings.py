@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'preps.apps.PrepsConfig',
     'rest_framework',
+    'scripts'
 ]
 
 MIDDLEWARE = [
