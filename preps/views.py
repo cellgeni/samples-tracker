@@ -5,8 +5,8 @@ from django.views import View
 from django.views.generic import ListView, RedirectView, TemplateView
 from rest_framework import generics
 
-from preps.models import CORE_PROJECTS, NON_CORE_PROJECTS
-from .models import Sample, Stage, Action, WarehouseSample, Owner, Project
+from preps.models import CORE_PROJECTS, NON_CORE_PROJECTS, Project
+from .models import Sample, Stage, Action, WarehouseSample, Owner, AgressoProject
 from .serializers import SampleSerializer, StageSerializer, StageCreateSerializer
 
 
@@ -14,11 +14,22 @@ class HomePageView(RedirectView):
     url = "samples/"
 
 
-class SamplesListView(ListView):
+class SamplesListView(View):
     template_name = "samples.html"
 
-    def get_queryset(self):
-        return WarehouseSample.objects.using("warehouse").raw(WarehouseSample.warehouse_view)
+    def get(self, request, *args, **kwargs):
+        context = {}
+        projects = {}
+        samples = WarehouseSample.objects.using("warehouse").raw(WarehouseSample.warehouse_view)
+        new_samples = []
+        for sample in samples:
+            if sample.cost_code not in projects:
+                projects[sample.cost_code] = Project.objects.get(cost_code=sample.cost_code)
+            setattr(sample, "core", "Core" if projects[sample.cost_code].is_core else "Non-core")
+            setattr(sample, "balance", projects[sample.cost_code].balance_avail)
+            new_samples.append(sample)
+        context['object_list'] = new_samples
+        return render(request, self.template_name, context)
 
 
 class ProjectView(View):
@@ -28,18 +39,18 @@ class ProjectView(View):
         context = {}
         cost_code = kwargs.get("cost_code")
         is_project_core = True
-        object_list = Project.objects.using("agresso").raw(Project.core_view(cost_code))
+        object_list = AgressoProject.objects.using("agresso").raw(AgressoProject.core_view(cost_code))
         if len(list(object_list)) == 0:
             is_project_core = False
-            object_list = Project.objects.using("agresso").raw(Project.non_core_view(cost_code))
+            object_list = AgressoProject.objects.using("agresso").raw(AgressoProject.non_core_view(cost_code))
 
         context['cost_code'] = cost_code
         context['object_list'] = object_list
         context['is_project_core'] = is_project_core
         if is_project_core:
-            context['total'] = Project.objects.raw(Project.count_balance(CORE_PROJECTS, cost_code))
+            context['total'] = AgressoProject.total_balance(CORE_PROJECTS, cost_code)
         else:
-            context['total'] = Project.objects.raw(Project.count_balance(NON_CORE_PROJECTS, cost_code))
+            context['total'] = AgressoProject.total_balance(NON_CORE_PROJECTS, cost_code)
         return render(request, self.template_name, context)
 
 
@@ -85,7 +96,7 @@ class SamplesAutocomplete(View):
 
     def get(self, request, *args, **kwargs):
         q = request.GET.get('term', '')
-        samples = Sample.objects.filter(sid__contains=q)
+        samples = AgressoProject.get_samples().objects.filter(sid__contains=q)
         results = []
         for sample in samples:
             sample_json = {}

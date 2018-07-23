@@ -4,6 +4,7 @@ from django.utils import timezone
 NON_CORE_PROJECTS = "AGR55.CELLGEN_NON_CORE_PROJECTS"
 CORE_PROJECTS = "AGR55.CELLGEN_CORE_PROJECTS"
 
+
 class Owner(models.Model):
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
@@ -67,7 +68,7 @@ FROM iseq_flowcell
    JOIN study USING(id_study_tmp)
    JOIN sample USING(id_sample_tmp)
    JOIN iseq_product_metrics USING(id_iseq_flowcell_tmp)
-WHERE  iseq_flowcell.cost_code = "S4436"                
+WHERE  iseq_flowcell.cost_code = "S4623"              
      """
 
     class Meta:
@@ -78,6 +79,15 @@ WHERE  iseq_flowcell.cost_code = "S4436"
 
 
 class Project(models.Model):
+    cost_code = models.CharField(max_length=15, primary_key=True)
+    balance_avail = models.FloatField()
+    is_core = models.BooleanField()
+
+    def __str__(self):
+        return self.cost_code
+
+
+class AgressoProject(models.Model):
     cost_code = models.CharField(max_length=25, primary_key=True)
     title = models.CharField(max_length=25)
     funding = models.CharField(max_length=25)
@@ -87,9 +97,11 @@ class Project(models.Model):
     project_text = models.CharField(max_length=25)
     ltd_budget = models.CharField(max_length=15)
     ltd_actual = models.CharField(max_length=15)
-    balance_avail = models.CharField(max_length=15)
+    balance_avail = models.CharField(max_length=15, primary_key=True)
 
-    core_view = lambda cost_code: f"""
+    @staticmethod
+    def core_view(cost_code=None):
+        query = f"""
         SELECT project as cost_code, 
         accrep_text, 
         "Year to Date" as year_to_date, 
@@ -97,9 +109,16 @@ class Project(models.Model):
         "Annual Budget" as annual_budget, 
         "Balance of Grant Available" as balance_avail 
         FROM {CORE_PROJECTS}
-        WHERE project = '{cost_code}'   
+        """
+        if cost_code:
+            query += f"""
+            WHERE project = '{cost_code}'   
          """
-    non_core_view = lambda cost_code: f"""
+        return query
+
+    @staticmethod
+    def non_core_view(cost_code=None):
+        query = f"""
            SELECT project as cost_code, 
         project_text as title,
         funding,
@@ -110,13 +129,27 @@ class Project(models.Model):
         "LTD Budget" as ltd_budget,
         "Balance of Grant Available" as balance_avail 
         FROM {NON_CORE_PROJECTS}
-        WHERE project = '{cost_code}'
-    """
+        """
+        if cost_code:
+            query += f"""
+            WHERE project = '{cost_code}'   
+         """
+        return query
+
     count_balance = lambda table, cost_code: f"""
-    SELECT SUM("Balance of Grant Available")
+    SELECT project as cost_code, "Balance of Grant Available" as balance_avail
     FROM {table}
     WHERE project='{cost_code}'
     """
+
+    @staticmethod
+    def get_samples(cost_code=None):
+        return AgressoProject.objects.using("agresso").raw(AgressoProject.core_view(cost_code))
+
+    @staticmethod
+    def total_balance(table, cost_code):
+        balance = AgressoProject.objects.using("agresso").raw(AgressoProject.count_balance(table, cost_code))
+        return round(sum(float(bal.balance_avail.replace(",", "")) for bal in balance), 2)
 
 
 class Meta:

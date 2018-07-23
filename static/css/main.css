@@ -8,5 +8,18 @@ body {
 }
 
 .samples-table{
-  width: 100%
+  min-width: 100%;
+  margin-top: 15px
+}
+
+.inline-block{
+  display: inline-block;
+}
+
+/*input, label {*/
+    /*display:block;*/
+/*}*/
+
+.select-cost-code{
+  margin-left: 20px;
 }
