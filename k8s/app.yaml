@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-tracker
+spec:
+  selector:
+    matchLabels:
+      app: sample-tracker
+  replicas: 1
+  template:
+    metadata:
+      name: sample-tracker
+      labels:
+        app: sample-tracker
+    spec:
+      containers:
+      - image: quay.io/cellgeni/sample-tracker:latest
+        imagePullPolicy: IfNotPresent
+        name: sample-tracker
+        ports:
+        - containerPort: 80
+          name: sample-tracker

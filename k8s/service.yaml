@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-tracker
+  labels:
+    app: sample-tracker
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: sample-tracker
+  selector:
+    app: sample-tracker
+

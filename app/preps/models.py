@@ -68,7 +68,7 @@ FROM iseq_flowcell
    JOIN study USING(id_study_tmp)
    JOIN sample USING(id_sample_tmp)
    JOIN iseq_product_metrics USING(id_iseq_flowcell_tmp)
-WHERE  iseq_flowcell.cost_code = "S4623"              
+WHERE  iseq_flowcell.cost_code = "S4442"              
      """
 
     class Meta:
