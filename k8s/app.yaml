@@ -17,6 +17,27 @@ spec:
       - image: quay.io/cellgeni/sample-tracker:latest
         imagePullPolicy: IfNotPresent
         name: sample-tracker
+        env:
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: sample-tracker
+                key: secret_key
+          - name: AGRESSO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sample-tracker
+                key: agresso_password
+          - name: WAREHOUSE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sample-tracker
+                key: warehouse_password
+          - name: MAIN_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sample-tracker
+                key: main_db_password
         ports:
         - containerPort: 80
           name: sample-tracker

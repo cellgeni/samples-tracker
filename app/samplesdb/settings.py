@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from .secrets import SECRET_KEY, DATABASES
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +53,38 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'samplesdb.urls'
+
+
+# Database
+# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+
+DATABASES = {
+    'default':
+        {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'cellgen_admin',
+            'PASSWORD': os.getenv("MAIN_DB_PASSWORD"),
+            'HOST': 'web-pg-cellgen-01.internal.sanger.ac.uk',
+            'PORT': '5432'
+        },
+    'warehouse': {
+        'NAME': 'mlwarehouse',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'mlwh_cellgen',
+        'PASSWORD': os.getenv("WAREHOUSE_PASSWORD"),
+        'HOST': 'mlwh-db-ro',
+        'PORT': '3435'
+    },
+    'agresso': {
+        'NAME': "ocs28-scan:1521/ubwt",
+        'ENGINE': 'django.db.backends.oracle',
+        'USER': 'cellgen_ro',
+        'PASSWORD': os.getenv("AGRESSO_PASSWORD"),
+        'HOST': 'ocs28-scan',
+    }
+}
+
 
 TEMPLATES = [
     {
