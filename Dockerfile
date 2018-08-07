@@ -7,13 +7,13 @@ RUN apt update && \
     apt upgrade -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server nginx supervisor\
     && pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install -r requirements.txt \
     && pip install uwsgi
 
 # setup all the configfiles
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-COPY nginx-app.conf /etc/nginx/sites-available/default
-COPY supervisor-app.conf /etc/supervisor/conf.d/
+COPY conf/nginx/nginx-app.conf /etc/nginx/sites-available/default
+COPY conf/nginx/supervisor-app.conf /etc/supervisor/conf.d/
 
 ADD . /code
 
